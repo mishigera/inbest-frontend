@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { uploadImage, fetchImages } from '../services/api';
 import { toast } from 'react-hot-toast';
+import { LogOut, Loader2 } from 'lucide-react';
 
 const Dashboard = () => {
   const [token, setToken] = useState('');
@@ -10,6 +11,7 @@ const Dashboard = () => {
   const [effects, setEffects] = useState<string[]>([]);
   const [resizeWidth, setResizeWidth] = useState('300');
   const [resizeHeight, setResizeHeight] = useState('300');
+  const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +36,8 @@ const Dashboard = () => {
       return;
     }
 
+    setIsUploading(true);
+
     const formData = new FormData();
     formData.append('image', file);
     formData.append('effects', JSON.stringify(effects));
@@ -51,6 +55,8 @@ const Dashboard = () => {
       setEffects([]);
     } catch {
       toast.error('Error al subir la imagen');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -117,9 +123,13 @@ const Dashboard = () => {
 
         <button
           onClick={handleUpload}
-          className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+          disabled={isUploading}
+          className={`flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 ${
+            isUploading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          Subir imagen
+          {isUploading && <Loader2 className="animate-spin w-4 h-4" />}
+          {isUploading ? 'Subiendo...' : 'Subir imagen'}
         </button>
       </div>
 
@@ -156,6 +166,18 @@ const Dashboard = () => {
           <p className="text-gray-500">No hay imágenes aún.</p>
         )}
       </div>
+
+      {/* Botón flotante logout */}
+      <button
+        onClick={() => {
+          localStorage.removeItem('token');
+          router.push('/');
+        }}
+        className="fixed bottom-6 right-6 bg-red-500 hover:bg-red-600 text-white p-3 rounded-full shadow-lg transition"
+        title="Cerrar sesión"
+      >
+        <LogOut className="w-5 h-5" />
+      </button>
     </div>
   );
 };
