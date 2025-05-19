@@ -1,40 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Inbest Image App (Frontend)
 
-## Getting Started
+Frontend en Next.js + TailwindCSS para consumir el backend de procesamiento de imágenes. Permite registro, login, subir imágenes con efectos (resize, greyscale, calidad) y visualizar la galería.
 
-First, run the development server:
+## 🚀 Tecnologías
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- React Hooks
+- Context / LocalStorage
+- JWT Authentication
+- React Hot Toast (para notificaciones)
+
+---
+
+## 🧑‍💻 Instalación
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+📁 Estructura del proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/pages
+  └── index.tsx        → Login
+  └── register.tsx     → Registro
+  └── dashboard.tsx    → Dashboard privado
 
-## Learn More
+/services/api.ts       → Funciones fetch (login, register, upload, get)
+/styles/globals.css    → Tailwind base
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+🖼 Funcionalidad del dashboard
+Subir imagen (image/jpeg o image/png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Seleccionar efectos (resize, greyscale, quality)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Galería de imágenes propias
+
+Mostrar toasts de éxito/error con react-hot-toast
+
+
+
+
+
+📦 Scripts
+
+npm run dev        # Levanta frontend en localhost:3000
+npm run build      # Compila el proyecto para producción
+📌 Requisitos
+Tener el backend corriendo en http://localhost:5050
+
+Usuario debe estar registrado con email/password
+
+
+
+Desarrollado por Gerardo Melgoza 👨‍💻
