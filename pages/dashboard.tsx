@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { uploadImage, fetchImages } from '../services/api';
 import { toast } from 'react-hot-toast';
 import { LogOut, Loader2 } from 'lucide-react';
+import { useRef } from 'react';
 
 const Dashboard = () => {
   const [token, setToken] = useState('');
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [resizeHeight, setResizeHeight] = useState('300');
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -45,9 +47,9 @@ const Dashboard = () => {
       toast.error('Selecciona una imagen primero');
       return;
     }
-  
+
     setIsUploading(true);
-  
+
     const formData = new FormData();
     formData.append('image', file);
     formData.append('effects', JSON.stringify(effects));
@@ -55,25 +57,29 @@ const Dashboard = () => {
       formData.append('resizeWidth', resizeWidth);
       formData.append('resizeHeight', resizeHeight);
     }
-  
+
     try {
-      const res:any = await uploadImage(token, formData);
-  
+      const res: any = await uploadImage(token, formData);
+
       if (res.error) {
         toast.error(res.error); // <-- mostramos el error exacto del backend
         return;
       }
-  
+
       toast.success('Imagen subida con éxito');
       const updated = await fetchImages(token);
       setImages(updated);
-      setFile(null);
-      setEffects([]);
+      
     } catch (error) {
       console.error(error);
       toast.error('Error inesperado al subir la imagen');
     } finally {
       setIsUploading(false);
+      setFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setEffects([]);
     }
   };
 
@@ -86,8 +92,12 @@ const Dashboard = () => {
         <h3 className="text-xl font-semibold mb-4">Subir una imagen</h3>
         <input
           type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => {
+            const selectedFile = e.target.files?.[0] || null;
+            setFile(selectedFile);
+          }}
           className="mb-4"
+          ref={fileInputRef}
         />
 
         <div className="mb-4 space-y-2">
@@ -141,9 +151,8 @@ const Dashboard = () => {
         <button
           onClick={handleUpload}
           disabled={isUploading}
-          className={`flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 ${
-            isUploading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`flex items-center justify-center gap-2 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
         >
           {isUploading && <Loader2 className="animate-spin w-4 h-4" />}
           {isUploading ? 'Subiendo...' : 'Subir imagen'}
