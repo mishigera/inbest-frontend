@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { login } from '../services/api';
-
+import { toast } from 'react-hot-toast';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,15 +15,10 @@ export default function LoginPage() {
         localStorage.setItem('token', res.token);
         router.push('/dashboard');
       } else {
-        Swal.fire({
-          title: "Good job!",
-          text: "You clicked the button!",
-          icon: "success"
-        });
-        alert(res.message || 'Error al iniciar sesión');
+        toast.success(res.message || 'Error al iniciar sesión');
       }
     } catch {
-      alert('Error al conectar con el servidor');
+      toast.error('Error al conectar con el servidor intenta mas tarde');
     }
   };
 

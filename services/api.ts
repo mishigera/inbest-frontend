@@ -23,15 +23,19 @@ export const uploadImage = async (token: string, formData: FormData) => {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`
-      // ❗️No pongas Content-Type: multipart/form-data → fetch lo maneja solo con FormData
     },
     body: formData
   });
 
-  return res.json();
-};
+  // Verificamos si la respuesta no fue exitosa (ej. 400, 500)
+  const data = await res.json();
 
+  if (!res.ok) {
+    // Retornamos el error que viene del backend (ej. { error: 'Formato no soportado' })
+    return { error: data.error || 'Error al subir imagen' };
+  }
 
+}
 export const fetchImages = async (token: string) => {
   const res = await fetch(`${API_URL}/images`, {
     headers: { Authorization: `Bearer ${token}` }

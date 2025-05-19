@@ -29,15 +29,25 @@ const Dashboard = () => {
       prev.includes(effect) ? prev.filter((e) => e !== effect) : [...prev, effect]
     );
   };
-
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const allowed = ['image/jpeg', 'image/png'];
+      if (!allowed.includes(file.type)) {
+        toast.error('Formato no soportado (solo JPG o PNG)');
+        return;
+      }
+      setFile(file);
+    }
+  };
   const handleUpload = async () => {
     if (!file) {
       toast.error('Selecciona una imagen primero');
       return;
     }
-
+  
     setIsUploading(true);
-
+  
     const formData = new FormData();
     formData.append('image', file);
     formData.append('effects', JSON.stringify(effects));
@@ -45,16 +55,23 @@ const Dashboard = () => {
       formData.append('resizeWidth', resizeWidth);
       formData.append('resizeHeight', resizeHeight);
     }
-
+  
     try {
-      const res = await uploadImage(token, formData);
+      const res:any = await uploadImage(token, formData);
+  
+      if (res.error) {
+        toast.error(res.error); // <-- mostramos el error exacto del backend
+        return;
+      }
+  
       toast.success('Imagen subida con éxito');
       const updated = await fetchImages(token);
       setImages(updated);
       setFile(null);
       setEffects([]);
-    } catch {
-      toast.error('Error al subir la imagen');
+    } catch (error) {
+      console.error(error);
+      toast.error('Error inesperado al subir la imagen');
     } finally {
       setIsUploading(false);
     }
@@ -117,7 +134,7 @@ const Dashboard = () => {
               onChange={() => handleEffectChange('quality')}
               className="mr-2"
             />
-            Comprimir calidad (80%)
+            fiesheye
           </label>
         </div>
 
