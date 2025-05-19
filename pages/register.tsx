@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { login } from '../services/api';
+import { register } from '../services/api';
+import { toast } from 'react-hot-toast';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -10,17 +11,18 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await login(email, password);
+      const res = await register(email, password);
       if (res.token) {
         localStorage.setItem('token', res.token);
         router.push('/dashboard');
       } else {
-        Swal.fire({
-          title: "Good job!",
-          text: "You clicked the button!",
-          icon: "success"
-        });
-        alert(res.message || 'Error al iniciar sesión');
+        if (res.message === 'Usuario registrado con éxito') {
+          toast.success(res.message);
+          router.push('/');
+        } else {
+          toast.error(res.message || 'Error al registrarse');
+        }
+
       }
     } catch {
       alert('Error al conectar con el servidor');
@@ -33,7 +35,7 @@ export default function LoginPage() {
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 py-6 w-full max-w-sm"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Iniciar sesión</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Registrarse</h2>
         <input
           type="email"
           placeholder="Correo electrónico"
@@ -52,14 +54,14 @@ export default function LoginPage() {
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
         >
-          Entrar
+          Crear cuenta
         </button>
         <p className="text-sm text-center mt-4">
-          ¿No tienes cuenta?{' '}
-          <a href="/register" className="text-blue-600 hover:underline">
-            Regístrate aquí
+          ¿Ya tienes cuenta?{' '}
+          <a href="/" className="text-blue-600 hover:underline">
+            Inicia sesión
           </a>
         </p>
       </form>
